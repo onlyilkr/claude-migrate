@@ -1,0 +1,31 @@
+version: 2
+project_name: claude-migrate
+builds:
+  - main: ./cmd/claude-migrate
+    binary: claude-migrate
+    env:
+      - CGO_ENABLED=0
+    goos: [darwin]
+    goarch: [amd64, arm64]
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+archives:
+  - formats: [tar.gz]
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+checksum:
+  name_template: checksums.txt
+homebrew_casks:
+  - name: claude-migrate
+    repository:
+      owner: onlyilkr
+      name: homebrew-tap
+      token: "{{ .Env.HOMEBREW_TAP_TOKEN }}"
+    homepage: https://github.com/onlyilkr/claude-migrate
+    description: "Move Claude Desktop Code sessions between accounts (unofficial)"
+    license: MIT
+    hooks:
+      post:
+        install: |
+          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
+            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/claude-migrate"]
+          end

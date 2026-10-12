@@ -1,0 +1,51 @@
+{
+  "dayFieldsOrBoundaryStamped": true,
+  "recordedSkips": {},
+  "scheduledTasks": [
+    {
+      "createdAt": 1788870033612,
+      "cwd": "/Users/dev/path-872",
+      "displayName": "title-1553",
+      "enabled": false,
+      "filePath": "/Users/dev/path-2289",
+      "fireAt": 1789455600000,
+      "id": "scheduledTaskId-1548",
+      "lastRunAt": "lastRunAt-2290",
+      "lastScheduledFor": "lastScheduledFor-2291",
+      "notifySessionId": "local_421cb74f-3f80-4cc3-8058-19ff9966b40f"
+    },
+    {
+      "createdAt": 1789211183150,
+      "cwd": "/Users/dev/path-909",
+      "displayName": "displayName-2293",
+      "enabled": true,
+      "filePath": "/Users/dev/path-2294",
+      "fireAt": 1791788400000,
+      "id": "id-2292",
+      "notifySessionId": "local_d8a673c7-ea3e-4035-85df-06dfd2ea5f32"
+    },
+    {
+      "createdAt": 1791146125613,
+      "cwd": "/Users/dev/path-957",
+      "displayName": "title-2088",
+      "enabled": false,
+      "filePath": "/Users/dev/path-2296",
+      "fireAt": 1791230400000,
+      "id": "scheduledTaskId-2085",
+      "lastRunAt": "lastRunAt-2297",
+      "lastScheduledFor": "lastScheduledFor-2295",
+      "notifySessionId": "local_7fc64ed7-709e-43cc-8608-4e8021bb3dae"
+    },
+    {
+      "createdAt": 1791295410414,
+      "cwd": "/Users/dev/path-872",
+      "displayName": "displayName-2300",
+      "enabled": true,
+      "filePath": "/Users/dev/path-2298",
+      "fireAt": 1791442800000,
+      "id": "id-2299",
+      "notifySessionId": "local_421cb74f-3f80-4cc3-8058-19ff9966b40f"
+    }
+  ],
+  "sundayAliasBoundaryStamped": true
+}

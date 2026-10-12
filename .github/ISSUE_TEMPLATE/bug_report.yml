@@ -1,0 +1,59 @@
+name: Bug report
+description: Something went wrong or behaved unexpectedly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. This tool reads undocumented Claude Desktop files, so the details below matter.
+        If the bug involves data loss or writing to the wrong store, stop and read SECURITY.md first.
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: "15.2"
+    validations:
+      required: true
+  - type: input
+    id: desktop
+    attributes:
+      label: Claude Desktop version
+      description: "Claude menu, About Claude."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: claude-migrate version
+      description: Output of `claude-migrate version`.
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Command you ran
+      render: shell
+      placeholder: claude-migrate apply --from 1a2b3c4d/5e6f7a8b
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `claude-migrate doctor --json`
+      description: Redact your email address, organization name and any session titles before pasting. Short account/org ID prefixes are fine.
+      render: json
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Include the exit code and any error text.
+    validations:
+      required: true
