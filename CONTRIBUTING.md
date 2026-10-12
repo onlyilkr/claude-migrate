@@ -46,9 +46,22 @@ titles, project paths, URLs. Build them from a real store only with the anonymiz
 go run ./scripts/anonymize -src <store dir> -out <dir>
 ```
 
-Then search the output for your name, email, organization, account IDs and home paths, and
-confirm nothing matches. Use placeholders like `dev@example.com` and `1a2b3c4d/5e6f7a8b` everywhere else,
-including issues and pull requests.
+Then run the privacy grep on the output directory and confirm it prints nothing. The terms to look for come
+from your own machine, so none of them are written into this repository. `SRC_ID` is the source store's
+`<account-uuid>/<org-uuid>`:
+
+```sh
+OUT=<dir>            # the -out directory
+SRC_ID=<account-uuid>/<org-uuid>
+PII=$(python3 -c "import json,os;o=json.load(open(os.path.expanduser('~/.claude.json')))['oauthAccount'];u,d=o['emailAddress'].split('@');print('|'.join([os.environ['USER'],u,d.split('.')[0],o['organizationName'],o['accountUuid'][:8],o['organizationUuid'][:8]]))")
+grep -rniE "$PII|@[a-z0-9-]+\.[a-z]{2,}|/Users/[^/\"]+/(workspace|Library|Desktop|Downloads|Documents)|https?://|session_01" "$OUT" | head
+grep -rn "${SRC_ID%%/*}\|${SRC_ID#*/}" "$OUT" | head
+```
+
+If anything prints, extend the anonymizer (`anon.str` / `keep` in `scripts/anonymize`) so that value is
+replaced, delete the output directory, regenerate and run the grep again. Do not commit until it prints
+nothing. Use placeholders like `dev@example.com` and `1a2b3c4d/5e6f7a8b` everywhere else, including issues and
+pull requests.
 
 ## Docs
 

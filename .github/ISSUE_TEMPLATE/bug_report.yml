@@ -40,7 +40,7 @@ body:
     id: doctor
     attributes:
       label: Output of `claude-migrate doctor --json`
-      description: Redact your email address, organization name and any session titles before pasting. Short account/org ID prefixes are fine.
+      description: Redact `email`, `org_name` and every `sample_titles` entry, and shorten each UUID to its first 8 characters.
       render: json
     validations:
       required: true

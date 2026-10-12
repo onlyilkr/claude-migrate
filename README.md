@@ -9,28 +9,27 @@
 [![CI](https://github.com/onlyilkr/claude-migrate/actions/workflows/ci.yml/badge.svg)](https://github.com/onlyilkr/claude-migrate/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/onlyilkr/claude-migrate)](https://github.com/onlyilkr/claude-migrate/releases)
 [![Go version](https://img.shields.io/github/go-mod/go-version/onlyilkr/claude-migrate)](go.mod)
-[![Go Report Card](https://goreportcard.com/badge/github.com/onlyilkr/claude-migrate)](https://goreportcard.com/report/github.com/onlyilkr/claude-migrate)
 [![License](https://img.shields.io/github/license/onlyilkr/claude-migrate)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS-lightgrey)](#limitations)
 
 Move your Claude Desktop **Code** sessions to another account on the same Mac, so the sidebar shows them again.
 
-When you switch Claude accounts (personal to Team, for example), the Code tab in Claude Desktop starts empty. Nothing was deleted: Desktop keeps one sidebar store per account and organization, and it only reads the store of the account you are signed in to. `claude-migrate` copies the session records from the old account's store to the new one, keeps their IDs (so pins carry over), clears the links that belong to the old account, and never touches transcripts or existing files.
+When you switch Claude accounts (personal to Team, for example), the Code tab in Claude Desktop starts empty. Nothing was deleted: as observed in Claude Desktop (October 2026), it keeps one sidebar store per account and organization and only reads the store of the account you are signed in to. `claude-migrate` copies the session records from the old account's store to the new one, keeps their IDs (so pins carry over), clears the links that belong to the old account, and never touches transcripts or existing files.
 
 ## How it works
 
-A Desktop Code session has two halves. Only one of them is tied to an account.
+A Desktop Code session has two halves. Only one of them is tied to an account. The Desktop storage described here is as observed in Claude Desktop (October 2026); it is undocumented and can change.
 
 ```mermaid
 flowchart LR
     subgraph shared["Account-independent"]
-        T["~/.claude/projects/&lt;project&gt;/&lt;session&gt;.jsonl<br/>transcript: the conversation"]
+        T["~/.claude/projects/#lt;project#gt;/#lt;session#gt;.jsonl<br/>transcript: the conversation"]
     end
     subgraph old["Old account store"]
-        R1["claude-code-sessions/&lt;acct&gt;/&lt;org&gt;/local_&lt;id&gt;.json<br/>sidebar record"]
+        R1["claude-code-sessions/#lt;acct#gt;/#lt;org#gt;/local_#lt;id#gt;.json<br/>sidebar record"]
     end
     subgraph new["New account store"]
-        R2["claude-code-sessions/&lt;acct&gt;/&lt;org&gt;/local_&lt;id&gt;.json<br/>sidebar record"]
+        R2["claude-code-sessions/#lt;acct#gt;/#lt;org#gt;/local_#lt;id#gt;.json<br/>sidebar record"]
     end
     R1 -- "claude-migrate copies<br/>(same file name and ID)" --> R2
     R1 -. points to .-> T
@@ -44,12 +43,12 @@ flowchart LR
 ## Features
 
 - Copies sidebar records between account/organization stores, keeping the JSON value of every field it does not need to change, unknown fields included.
-- Keeps the session ID, so pins carry over: Desktop keeps one global pin list keyed by session ID, shared by all accounts.
+- Keeps the session ID, so pins carry over: as observed, Desktop keeps one global pin list keyed by session ID, shared by all accounts.
 - Dry run by default. `apply` is additive only and never overwrites a file.
 - Every write is logged to a manifest before it happens; `undo` removes exactly what a run created, and only if the files are unchanged.
 - Refuses to write while Claude Desktop is running, and cross-checks the target account against the one Desktop last used.
 - Skips sessions whose transcript is gone (they would open empty); `--include-orphans` copies them anyway.
-- Never brings back a session you deleted in the target account: Desktop leaves a `deleted_<id>` marker, and with kept IDs that marker names the same session.
+- Never brings back a session you deleted in the target account: as observed, Desktop leaves a `deleted_<id>` marker, and with kept IDs that marker names the same session.
 - Fails closed on a folder layout it does not recognize.
 - Machine-readable `--json` output on every command except `version`. Standard library only, no network access.
 
@@ -70,7 +69,7 @@ go install github.com/onlyilkr/claude-migrate/cmd/claude-migrate@latest
 Or download a release binary (`darwin/arm64` or `darwin/amd64`) from the [releases page](https://github.com/onlyilkr/claude-migrate/releases) and verify it against the published checksums:
 
 ```sh
-shasum -a 256 -c checksums.txt   # run next to the archive; the other architecture's archive is reported as missing
+shasum -a 256 -c --ignore-missing checksums.txt   # run next to the downloaded archive
 ```
 
 ## Quick start
@@ -97,7 +96,7 @@ Changed your mind? `claude-migrate undo` removes exactly the files the last run 
 | `claude-migrate` / `plan` | Shows what would be copied and what needs manual follow-up. Picks the source for you when there is only one candidate; asks on a TTY otherwise. | No |
 | `apply --from X` | Copies the records and writes a manifest to `~/.claude-migrate/runs/`. `--from` is required. | Yes |
 | `undo [manifest]` | Removes the files a run created (latest run by default), skipping any you changed since. Without a path it refuses, instead of picking an older run, when a newer run file is unreadable. | Yes (deletes) |
-| `pins` | Lists pinned source sessions: `pinned in target`, `copied under a different ID; pin it again in Desktop` or `not migrated yet`. | No |
+| `pins` | Lists the pinned source sessions that are being copied or are already in the target (skipped ones, whether no transcript, deleted or a name conflict, are not listed), each as `pinned in target`, `copied under a different ID; pin it again in Desktop` or `not migrated yet`. | No |
 | `doctor` | Desktop state, signed-in account, whether Desktop last used the same account, stores, `cleanupPeriodDays`. | No |
 | `version` | Prints the version. | No |
 
@@ -157,13 +156,13 @@ Unknown fields never block a run; `plan` lists them for information.
 
 **Can I delete the sessions from the old account afterwards?** Wait until you have opened a few migrated sessions in the new account. Both copies share the same session ID and transcript, and how Desktop treats shared state when one copy is deleted is not documented.
 
-**The sidebar is still empty after `apply`.** Desktop writes its in-memory list back on exit. Quit it fully with Cmd+Q (not just the window), relaunch, and make sure you are signed in to the target account.
+**The sidebar is still empty after `apply`.** As observed, Desktop writes its in-memory list back on exit. Quit it fully with Cmd+Q (not just the window), relaunch, and make sure you are signed in to the target account.
 
 **`~/.claude.json is signed in to account … but Claude Desktop last used account …`.** The two disagree about which account is current. Check `claude-migrate doctor`, then pass `--to <account>/<org>` for the store you actually want.
 
 **"no transcript (skipped)" is not zero.** Those records point at a transcript that is no longer in `~/.claude/projects` (often removed by `cleanupPeriodDays`). In Desktop they open empty. Copy them anyway with `--include-orphans`, or leave them behind.
 
-**How do pins work?** Desktop stores pins as a single list of `local_<id>` values in `claude_desktop_config.json`, shared by all accounts. Because the copy keeps its ID, it is pinned as soon as it appears. The tool reads that list (read-only) to decide which source sessions are pinned; a record's own `isStarred` flag is only the fallback when the list cannot be read. `claude-migrate pins` shows each pinned source session as `pinned in target` or `not migrated yet`. A session copied by an older tool under a new ID counts as `pinned in target` if you already pinned that copy again, and as `copied under a different ID; pin it again in Desktop` otherwise; `plan` counts only the latter in its pin follow-up line.
+**How do pins work?** As observed in Claude Desktop (October 2026), pins are stored as a single list of `local_<id>` values in `claude_desktop_config.json`, shared by all accounts. Because the copy keeps its ID, it is pinned as soon as it appears. The tool reads that list (read-only) to decide which source sessions are pinned; a record's own `isStarred` flag is only the fallback when the list cannot be read. `claude-migrate pins` shows each pinned source session as `pinned in target` or `not migrated yet`. A session copied by an older tool under a new ID counts as `pinned in target` if you already pinned that copy again, and as `copied under a different ID; pin it again in Desktop` otherwise; `plan` counts only the latter in its pin follow-up line.
 
 **A record was skipped as a name conflict.** The target already has a file with that name for a different session. It is left untouched and listed in the plan.
 
@@ -185,7 +184,7 @@ claude-migrate apply --home "$SCRATCH" --from <old-account>/<old-org> --include-
 claude-migrate undo --home "$SCRATCH"
 ```
 
-The Desktop check is skipped for a home that is not yours, and nothing outside the scratch directory is touched. `~/.claude/projects` need not be copied; `--include-orphans` stands in for the transcripts you left out. Delete the scratch directory when done: the copy of `~/.claude.json` holds your account details. `--home` is an undocumented testing flag.
+The Desktop check is skipped for a home that is not yours, and nothing outside the scratch directory is touched. `~/.claude/projects` need not be copied; `--include-orphans` stands in for the transcripts you left out. Delete the scratch directory when done: the copy of `~/.claude.json` holds your account details. `--home` is a testing flag hidden from `claude-migrate help`.
 
 ## Alternatives
 

@@ -5,8 +5,6 @@
 Please report vulnerabilities **privately** through GitHub Security Advisories:
 [Report a vulnerability](https://github.com/onlyilkr/claude-migrate/security/advisories/new).
 Do not open a public issue or pull request for a security problem.
-If that option is not available on the repository, open a regular issue titled "Security contact request"
-with no details, and the maintainer will reply with a private channel.
 
 Include the version (`claude-migrate version`), what you did, what happened, and, if you can, a minimal
 fake home directory that reproduces it. Redact personal data. You can expect an acknowledgement within a
