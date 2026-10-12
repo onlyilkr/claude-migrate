@@ -5,6 +5,8 @@ and the project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-12
+
 ### Changed
 
 - The Homebrew cask uses the declarative `postflight_steps` instead of the deprecated `postflight`.
@@ -68,5 +70,6 @@ First release.
   stop the run (exit 4).
 - Release workflow pins actions to commit SHAs and uses least-privilege tokens.
 
-[Unreleased]: https://github.com/onlyilkr/claude-migrate/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/onlyilkr/claude-migrate/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/onlyilkr/claude-migrate/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/onlyilkr/claude-migrate/releases/tag/v0.1.0
