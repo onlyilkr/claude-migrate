@@ -10,7 +10,7 @@ fmt-check:
 	@test -z "$$(gofmt -l .)" || { echo "gofmt needed on:"; gofmt -l .; exit 1; }
 
 lint:
-	go run honnef.co/go/tools/cmd/staticcheck@v0.8.1 ./...
+	GOTOOLCHAIN=go1.26.2 go run honnef.co/go/tools/cmd/staticcheck@v0.8.1 ./...
 
 check: test vet fmt-check lint
 

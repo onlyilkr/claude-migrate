@@ -16,6 +16,8 @@ make check
 `make check` runs the race-enabled tests, `go vet`, a gofmt check and staticcheck (fetched with
 `go run`, nothing to install). CI runs the same on macOS.
 
+staticcheck runs on Go 1.26; `make lint` selects that toolchain automatically (Go downloads it on first use).
+
 | Target | Does |
 |---|---|
 | `make test` | `go test -race ./...` |
