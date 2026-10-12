@@ -5,6 +5,11 @@ and the project aims to follow [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- CI and release workflows use actions/checkout 7, actions/setup-go 7 and goreleaser-action 7.3 (pinned by commit SHA).
+- CI builds a release snapshot on every change (`release-dry-run`), so release configuration is checked before a tag is pushed.
+
 ## [0.1.1] - 2026-10-12
 
 ### Changed
