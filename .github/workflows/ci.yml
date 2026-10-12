@@ -20,8 +20,8 @@ jobs:
       - run: go vet ./...
       - run: go test -race ./...
   lint:
-    # staticcheck 2026.2.1 needs a newer Go than the module's floor, so this job
-    # runs on the current stable toolchain instead of go.mod's version.
+    # staticcheck 2026.2.1 needs Go 1.26 (newer than the module's floor) and
+    # cannot read Go 1.27 export data, so pin the toolchain it supports.
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
@@ -29,7 +29,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-go@40f1582b2485089dde7abd97c1529aa768e1baff # v5.6.0
         with:
-          go-version: stable
+          go-version: "1.26.x"
       - uses: dominikh/staticcheck-action@9716614d4101e79b4340dd97b10e54d68234e431 # v1.4.1
         with:
           install-go: false
