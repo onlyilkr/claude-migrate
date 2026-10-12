@@ -23,9 +23,14 @@ homebrew_casks:
     homepage: https://github.com/onlyilkr/claude-migrate
     description: "Move Claude Desktop Code sessions between accounts (unofficial)"
     license: MIT
-    hooks:
-      post:
-        install: |
-          if system_command("/usr/bin/xattr", args: ["-h"]).exit_status == 0
-            system_command "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "#{staged_path}/claude-migrate"]
-          end
+    # The binary is not notarized yet, so clear the quarantine flag after install.
+    # Homebrew deprecated Ruby `postflight` for declarative `postflight_steps`;
+    # GoReleaser 2.18 cannot emit those, so the block is written verbatim (it lands
+    # first in the cask; harmless at install, only `brew style` flags the order).
+    # Switch to hooks.post.install_steps once GoReleaser 2.19 is released.
+    # GoReleaser templates the block, so Homebrew's {{staged_path}} token is
+    # escaped as a Go template string literal.
+    custom_block: |
+      postflight_steps do
+        run "/usr/bin/xattr", args: ["-dr", "com.apple.quarantine", "{{ "{{staged_path}}" }}/claude-migrate"], must_succeed: false
+      end
