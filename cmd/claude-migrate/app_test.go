@@ -1236,3 +1236,15 @@ func TestSuggestedApplyHitsAccountCrossCheck(t *testing.T) {
 		t.Fatal("a manifest was created")
 	}
 }
+
+// The suggested apply command must copy what the plan showed: --include-orphans
+// is carried over when the plan used it.
+func TestPlanSuggestionKeepsIncludeOrphans(t *testing.T) {
+	hs := newHarness(t, seed(t), "", false)
+	if code := hs.run("plan", "--include-orphans"); code != exitOK {
+		t.Fatalf("plan: %d %s", code, hs.err)
+	}
+	if !strings.Contains(hs.out.String(), "To apply: claude-migrate apply --from a1a1a1a1/b1b1b1b1 --include-orphans\n") {
+		t.Fatalf("suggestion lost --include-orphans:\n%s", hs.out)
+	}
+}

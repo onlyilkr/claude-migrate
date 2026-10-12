@@ -14,6 +14,7 @@ and the project aims to follow [Semantic Versioning](https://semver.org/).
 ### Fixed
 
 - The apply command that `plan` suggests no longer bypasses the account cross-check: it names `--to` only when you passed `--to`.
+- The apply command that `plan` suggests keeps `--include-orphans` when the plan used it, so it copies what the plan showed.
 - `go install` builds report their module version instead of `dev`.
 - The `pins` hint to run `apply` includes `--from`.
 - The README diagram placeholders render on GitHub.

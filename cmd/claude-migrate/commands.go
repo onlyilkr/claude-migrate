@@ -92,6 +92,9 @@ func (a *App) cmdPlan(args []string, apply bool) error {
 		if o.to != "" {
 			suggestion += " --to " + pl.Target.Short()
 		}
+		if o.includeOrphans {
+			suggestion += " --include-orphans"
+		}
 		fmt.Fprintf(a.Out, "\nDry run: nothing was written.\nTo apply: %s\n", suggestion)
 		return nil
 	}
