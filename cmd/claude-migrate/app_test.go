@@ -1186,3 +1186,53 @@ func TestUndoIncompleteMessageForRefusedEntries(t *testing.T) {
 		t.Fatalf("message = %q", msg)
 	}
 }
+
+// The dry run's suggested command must keep apply's account cross-check
+// active, so it names --to only when the user passed --to to plan.
+func TestPlanSuggestsApplyWithoutTo(t *testing.T) {
+	hs := newHarness(t, seed(t), "", false)
+	if code := hs.run(); code != exitOK {
+		t.Fatalf("exit %d, stderr %s", code, hs.err)
+	}
+	if want := "To apply: claude-migrate apply --from a1a1a1a1/b1b1b1b1\n"; !strings.Contains(hs.out.String(), want) {
+		t.Fatalf("missing %q in:\n%s", want, hs.out)
+	}
+}
+
+func TestPlanSuggestsApplyWithToWhenGiven(t *testing.T) {
+	hs := newHarness(t, seed(t), "", false)
+	if code := hs.run("plan", "--to", "a2a2a2a2/b2b2b2b2"); code != exitOK {
+		t.Fatalf("exit %d, stderr %s", code, hs.err)
+	}
+	if want := "To apply: claude-migrate apply --from a1a1a1a1/b1b1b1b1 --to a2a2a2a2/b2b2b2b2\n"; !strings.Contains(hs.out.String(), want) {
+		t.Fatalf("missing %q in:\n%s", want, hs.out)
+	}
+}
+
+// Running exactly what plan printed must still hit the account cross-check.
+func TestSuggestedApplyHitsAccountCrossCheck(t *testing.T) {
+	h := seed(t)
+	h.DesktopLastAccount(testutil.AccOld)
+	hs := newHarness(t, h, "", false)
+	if code := hs.run("plan"); code != exitOK {
+		t.Fatalf("plan exit %d, stderr %s", code, hs.err)
+	}
+	var suggested []string
+	for _, line := range strings.Split(hs.out.String(), "\n") {
+		if cmd, ok := strings.CutPrefix(line, "To apply: claude-migrate "); ok {
+			suggested = strings.Fields(cmd)
+		}
+	}
+	if len(suggested) == 0 || suggested[0] != "apply" {
+		t.Fatalf("no suggested apply command in:\n%s", hs.out)
+	}
+	if code := hs.run(suggested...); code != exitUsage || !strings.Contains(hs.err.String(), mismatchMsg) {
+		t.Fatalf("%v: exit %d, stderr %s", suggested, code, hs.err)
+	}
+	if n := len(hs.Names(targetDir(h))); n != 1 {
+		t.Fatalf("target has %d files, want 1", n)
+	}
+	if _, err := os.Stat(hs.app.pathsFor(options{}).RunsDir()); err == nil {
+		t.Fatal("a manifest was created")
+	}
+}

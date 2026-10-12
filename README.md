@@ -82,7 +82,7 @@ shasum -a 256 -c checksums.txt   # run next to the archive; the other architectu
    claude-migrate            # same as: claude-migrate plan
    ```
    With several candidate stores, run `claude-migrate doctor` to list them.
-4. Apply:
+4. Apply, using the command the plan printed:
    ```sh
    claude-migrate apply --from 1a2b3c4d/5e6f7a8b
    ```

@@ -86,7 +86,13 @@ func (a *App) cmdPlan(args []string, apply bool) error {
 	fmt.Fprintf(a.Out, "%s\nTarget: %s\n\n", disclaimer, r.targetLabel)
 	report.Text(a.Out, pl)
 	if !apply {
-		fmt.Fprintf(a.Out, "\nDry run: nothing was written.\nTo apply: claude-migrate apply --from %s --to %s\n", pl.Source.Short(), pl.Target.Short())
+		// --to is repeated only when the user passed it: without it, apply keeps
+		// its account cross-check against the account Desktop last used.
+		suggestion := "claude-migrate apply --from " + pl.Source.Short()
+		if o.to != "" {
+			suggestion += " --to " + pl.Target.Short()
+		}
+		fmt.Fprintf(a.Out, "\nDry run: nothing was written.\nTo apply: %s\n", suggestion)
 		return nil
 	}
 	res, err := a.apply(r.p, pl)
