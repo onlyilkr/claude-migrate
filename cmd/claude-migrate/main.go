@@ -5,11 +5,31 @@ package main
 import (
 	"fmt"
 	"os"
+	"runtime/debug"
 
 	"github.com/onlyilkr/claude-migrate/internal/guard"
 )
 
+// version is set by GoReleaser through -ldflags; "dev" marks any other build.
 var version = "dev"
+
+func init() {
+	bi, ok := debug.ReadBuildInfo()
+	version = resolveVersion(version, bi, ok)
+}
+
+// resolveVersion keeps an ldflags-injected version. A plain `go install
+// module@vX.Y.Z` build has no ldflags but records the module version, which is
+// used instead of "dev"; local builds report "(devel)" and stay "dev".
+func resolveVersion(v string, bi *debug.BuildInfo, ok bool) string {
+	if v != "dev" || !ok || bi == nil {
+		return v
+	}
+	if mv := bi.Main.Version; mv != "" && mv != "(devel)" {
+		return mv
+	}
+	return v
+}
 
 const disclaimer = "Unofficial community tool. Not affiliated with or endorsed by Anthropic."
 
