@@ -110,6 +110,9 @@ func TestPins(t *testing.T) {
 	if !strings.Contains(buf.String(), "[not migrated yet]") || strings.Contains(buf.String(), "pinned in target") {
 		t.Fatalf("unmigrated pins output:\n%s", buf.String())
 	}
+	if want := "Run `claude-migrate apply --from <account>/<org>` first, then run pins again."; !strings.Contains(buf.String(), want) {
+		t.Fatalf("unmigrated pins output lacks %q:\n%s", want, buf.String())
+	}
 }
 
 // A session an older version copied under a new ID is in the target, but its

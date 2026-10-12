@@ -82,6 +82,6 @@ func Pins(w io.Writer, rows []PinRow) {
 		fmt.Fprintf(w, "  - %s  [%s]\n", titleOr(r.Title), status(r))
 	}
 	if pending {
-		fmt.Fprintln(w, "\nRun `claude-migrate apply` first, then run pins again.")
+		fmt.Fprintln(w, "\nRun `claude-migrate apply --from <account>/<org>` first, then run pins again.")
 	}
 }
